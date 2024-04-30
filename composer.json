@@ -1,0 +1,37 @@
+{
+    "name": "plutuss/getid3-laravel",
+    "description": "A wrapper around james-heinrich/getid3 to extract various information from media files.",
+    "keywords": [
+        "laravel",
+        "getid3",
+        "audio",
+        "mp4",
+        "mp3",
+        "video"
+    ],
+    "minimum-stability": "stable",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "plutuss",
+            "email": "dima92konovalenko@gmail.com",
+            "homepage": "https://github.com/plutuss"
+        }
+    ],
+    "require": {
+        "james-heinrich/getid3": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Plutuss\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Plutuss\\Providers\\GetId3ServiceProvider"
+            ]
+        }
+    }
+}
