@@ -2,7 +2,7 @@
 
 ## Laravel:
 
-- [GitHub](#).
+- [GitHub](https://github.com/plutuss/getid3).
 - This package is a wrapper around   [james-heinrich/getid3](https://packagist.org/packages/james-heinrich/getid3).
 
 ```shell
