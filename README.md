@@ -2,7 +2,7 @@
 
 ## Laravel:
 
-- [GitHub](#).
+- [GitHub](https://github.com/plutuss/getid3).
 - This package is a wrapper around   [james-heinrich/getid3](https://packagist.org/packages/james-heinrich/getid3).
 
 ```shell
@@ -24,10 +24,11 @@ class MediaAnalyzerController extends Controller
     public function index(Request $request)
     {
     
-    // use Plutuss\Facades\MediaAnalyzer;
+    // To add a file locally it must be in storage.
+    // So that the Storage facade can read it.
      MediaAnalyzer::fromLocalFile('/video.mov')->getAllInfo();
      
-     // Request $request
+    
      MediaAnalyzer::uploadFile($request->file('video'))->getAllInfo();
   
     }
