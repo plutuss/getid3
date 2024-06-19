@@ -87,3 +87,29 @@ class MediaAnalyzerController extends Controller
     
 
 ```
+
+- You can also refer to the property  
+
+```php
+
+  $media = MediaAnalyzer::uploadFile($request->file('video'))
+  
+//      "video" => array:11 [▶]
+//      "warning" => array:5 [▶]
+//      "comments" => array:1 [▶]
+//      "encoding" => "UTF-8"
+//      "mime_type" => "video/quicktime"
+//      "quicktime" => array:11 [▶]
+//      "playtime_seconds" => 9.56
+//      "bitrate" => 50294133.891213
+//      "playtime_string" => "0:10"
+
+    $media->video;
+    
+    $media->playtime_seconds;
+    
+    $media->playtime_string;
+    
+    $media->mime_type;
+
+```
