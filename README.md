@@ -51,3 +51,39 @@ class MediaAnalyzerController extends Controller
 }
 
 ```
+
+- List of available methods
+```php
+    
+    $media = MediaAnalyzer::uploadFile($request->file('video'))
+    
+    $media->getAllInfo();
+    
+    $media->getDuration();
+    
+    $media->comments();
+    
+    $media->getResolution();
+    
+    $media->getImage();
+    
+    $media->getTitle();
+    
+    $media->getAlbum();
+    
+    $media->getPlaytime();
+    
+    $media->getGenres();
+    
+    $media->getArtist();
+    
+    $media->getComposer();
+    
+    $media->getTrackNumber();
+    
+    $media->getCopyrightInfo();
+    
+    $media->getFileFormat();
+    
+
+```
