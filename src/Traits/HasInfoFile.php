@@ -16,6 +16,10 @@ trait HasInfoFile
         return date('H:i:s', $this->data->get('playtime_seconds') ?? 0);
     }
 
+    /**
+     * @param string $key
+     * @return bool
+     */
     private function hasData(string $key): bool
     {
         if ($this->data->has($key)) {
@@ -60,6 +64,7 @@ trait HasInfoFile
         $data = $this->data;
 
         header('Content-Type: ' . Arr::get($data->get('comments'), 'picture.0.image_mime'));
+
         return Arr::get($data->get('comments'), 'picture.0.data');
 
     }
