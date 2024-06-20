@@ -41,11 +41,20 @@ class MediaAnalyzerController extends Controller
     
     // To add a file locally it must be in storage.
     // So that the Storage facade can read it.
+    // The default disk value is taken from the .env file FILESYSTEM_DISK
      MediaAnalyzer::fromLocalFile('/video.mov')->getAllInfo();
      
-    
+      // OR
+      
+     MediaAnalyzer::fromLocalFile(
+         path: 'files/video.mov',
+         disk: 'public',  // "local", "ftp", "sftp", "s3"
+     )->getAllInfo();
+     
+     
+     // Request file
      MediaAnalyzer::uploadFile($request->file('video'))->getAllInfo();
-  
+     
     }
 
 }
