@@ -75,7 +75,8 @@ interface MediaAnalyzerResponseInterface
 
     /**
      * @param string $path
+     * @param mixed $default
      * @return mixed
      */
-    public function getNestedValue(string $path): mixed;
+    public function getNestedValue(string $path, mixed $default = null): mixed;
 }
