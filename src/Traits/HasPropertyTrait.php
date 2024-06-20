@@ -2,6 +2,7 @@
 
 namespace Plutuss\Traits;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 trait HasPropertyTrait
@@ -18,6 +19,22 @@ trait HasPropertyTrait
     public function getAllInfo(): ?Collection
     {
         return $this->data;
+    }
+
+    /**
+     * @param string $path
+     * @return mixed
+     */
+    public function getNestedValue(string $path): mixed
+    {
+
+        if (\Illuminate\Foundation\Application::VERSION > 11.0) {
+            return fluent($this->getAllInfo())
+                ->get($path);
+        }
+
+        return Arr::get($this->getAllInfo()->toArray(), $path);
+
     }
 
 

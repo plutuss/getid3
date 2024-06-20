@@ -72,4 +72,10 @@ interface MediaAnalyzerResponseInterface
      * @return \Closure|null
      */
     public function getFileFormat();
+
+    /**
+     * @param string $path
+     * @return mixed
+     */
+    public function getNestedValue(string $path): mixed;
 }

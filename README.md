@@ -94,15 +94,15 @@ class MediaAnalyzerController extends Controller
 
   $media = MediaAnalyzer::uploadFile($request->file('video'))
   
-//      "video" => array:11 [▶]
-//      "warning" => array:5 [▶]
-//      "comments" => array:1 [▶]
-//      "encoding" => "UTF-8"
-//      "mime_type" => "video/quicktime"
-//      "quicktime" => array:11 [▶]
-//      "playtime_seconds" => 9.56
-//      "bitrate" => 50294133.891213
-//      "playtime_string" => "0:10"
+      "video" => array:11 [▶]
+      "warning" => array:5 [▶]
+      "comments" => array:1 [▶]
+      "encoding" => "UTF-8"
+      "mime_type" => "video/quicktime"
+      "quicktime" => array:11 [▶]
+      "playtime_seconds" => 9.56
+      "bitrate" => 50294133.891213
+      "playtime_string" => "0:10"
 
     $media->video;
     
@@ -112,4 +112,35 @@ class MediaAnalyzerController extends Controller
     
     $media->mime_type;
 
+```
+
+
+
+- The **getNestedValue()** method retrieves a value from a deeply nested array using "dot" notation
+
+```php
+    $media = MediaAnalyzer::uploadFile($request->file('video'))
+
+          "avdataoffset" => 48
+          "avdataend" => 60101538
+          "fileformat" => "quicktime"
+          "video" => array:11 [▼
+            "dataformat" => "quicktime"
+            "rotate" => 0
+            "resolution_x" => 1920.0
+            "resolution_y" => 1080.0
+            "codec" => "H.264"
+            "bits_per_sample" => 24
+            "lossless" => false
+            "pixel_aspect_ratio" => 1.0
+            "frame_rate" => 25.0
+            "bitrate" => 50294133.891213
+            "compression_ratio" => 0.040424168829743
+          ]
+          "warning" => array:5 [▶]
+          "comments" => array:1 [▶]
+
+
+    $media->getNestedValue('video.codec')
+    $media->getNestedValue('video.resolution_x')
 ```
