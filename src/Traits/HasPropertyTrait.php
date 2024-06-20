@@ -23,18 +23,12 @@ trait HasPropertyTrait
 
     /**
      * @param string $path
+     * @param mixed $default
      * @return mixed
      */
-    public function getNestedValue(string $path): mixed
+    public function getNestedValue(string $path, mixed $default = null): mixed
     {
-
-        if (\Illuminate\Foundation\Application::VERSION > 11.0) {
-            return fluent($this->getAllInfo())
-                ->get($path);
-        }
-
-        return Arr::get($this->getAllInfo()->toArray(), $path);
-
+        return data_get($this->getAllInfo(), $path, $default);
     }
 
 
