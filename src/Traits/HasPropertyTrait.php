@@ -2,7 +2,6 @@
 
 namespace Plutuss\Traits;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 trait HasPropertyTrait
