@@ -13,7 +13,7 @@ trait HasInfoFile
      */
     public function getDuration(): string
     {
-        return date('H:i:s', $this->data->get('playtime_seconds') ?? 0);
+        return date('H:i:s', $this->getNestedValue('playtime_seconds') ?? 0);
     }
 
     /**
@@ -30,19 +30,25 @@ trait HasInfoFile
 
 
     /**
-     * @return array|\Closure|null
+     * @return array|mixed
      */
-    public function comments()
+    public function getComments(): mixed
     {
         if ($this->hasData('comments')) {
-            return $this->data->get('comments');
+            return $this->getNestedValue('comments');
         }
         return [];
     }
 
     /**
-     * @return array|Collection
+     * @return array|mixed
      */
+    public function comments(): mixed
+    {
+        return $this->getComments();
+    }
+
+
     public function getResolution(): array|Collection
     {
         $data = $this->data;
@@ -51,8 +57,8 @@ trait HasInfoFile
         }
 
         return collect([
-            'resolution_x' => $data->get('video')['resolution_x'],
-            'resolution_y' => $data->get('video')['resolution_y'],
+            'resolution_x' => $this->getNestedValue('video.resolution_x'),
+            'resolution_y' => $this->getNestedValue('video.resolution_y'),
         ]);
     }
 
@@ -74,77 +80,85 @@ trait HasInfoFile
      */
     public function getTitle(): string
     {
-        $title = Arr::get($this->comments(), 'title.0', '');
+        $title = Arr::get($this->getComments(), 'title.0', '');
 
         if (empty($title)) {
-            return $this->data->get('filename');
+            return $this->getNestedValue('filename');
         }
 
         return $title;
     }
 
+
     /**
      * @return array|\ArrayAccess|mixed
      */
-    public function getAlbum()
+    public function getAlbum(): mixed
     {
-        return Arr::get($this->comments(), 'album.0', '');
+        return Arr::get($this->getComments(), 'album.0', '');
     }
 
-    /**
-     * @return \Closure|string
-     */
-    public function getPlaytime()
-    {
-        return $this->data->get('playtime_string') ?? '';
-    }
 
     /**
-     * @return array|\Closure
+     * @return mixed|string
      */
-    public function getGenres()
+    public function getPlaytime(): mixed
     {
-        return $this->data->get('genre') ?? [];
+        return $this->getNestedValue('playtime_string') ?? '';
     }
 
-    /**
-     * @return \Closure|null
-     */
-    public function getArtist()
-    {
-        return $this->data->get('artist') ?? null;
-    }
 
     /**
-     * @return \Closure|null
+     * @return array|mixed
      */
-    public function getComposer()
+    public function getGenres(): mixed
     {
-        return $this->data->get('composer') ?? null;
+        return $this->getNestedValue('genre') ?? [];
     }
 
-    /**
-     * @return \Closure|null
-     */
-    public function getTrackNumber()
-    {
-        return $this->data->get('track_number') ?? null;
-    }
 
     /**
-     * @return \Closure|null
+     * @return mixed|null
      */
-    public function getCopyrightInfo()
+    public function getArtist(): mixed
     {
-        return $this->data->get('copyright') ?? null;
+        return $this->getNestedValue('artist') ?? null;
     }
 
+
     /**
-     * @return \Closure|null
+     * @return mixed|null
      */
-    public function getFileFormat()
+    public function getComposer(): mixed
     {
-        return $this->data->get('fileformat') ?? null;
+        return $this->getNestedValue('composer') ?? null;
+    }
+
+
+    /**
+     * @return mixed|null
+     */
+    public function getTrackNumber(): mixed
+    {
+        return $this->getNestedValue('track_number') ?? null;
+    }
+
+
+    /**
+     * @return mixed|null
+     */
+    public function getCopyrightInfo(): mixed
+    {
+        return $this->getNestedValue('copyright') ?? null;
+    }
+
+
+    /**
+     * @return mixed|null
+     */
+    public function getFileFormat(): mixed
+    {
+        return $this->getNestedValue('fileformat') ?? null;
     }
 
 
