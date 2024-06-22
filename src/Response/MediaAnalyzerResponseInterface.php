@@ -6,6 +6,9 @@ use Illuminate\Support\Collection;
 
 interface MediaAnalyzerResponseInterface
 {
+    /**
+     * @return Collection|null
+     */
     public function getAllInfo(): ?Collection;
 
     /**
@@ -14,9 +17,9 @@ interface MediaAnalyzerResponseInterface
     public function getDuration(): string;
 
     /**
-     * @return array|\Closure|null
+     * @return mixed
      */
-    public function comments();
+    public function getComments(): mixed;
 
     /**
      * @return array|Collection
@@ -28,50 +31,51 @@ interface MediaAnalyzerResponseInterface
      */
     public function getImage(): mixed;
 
+
     /**
      * @return string
      */
     public function getTitle(): string;
 
     /**
-     * @return array|\ArrayAccess|mixed
+     * @return mixed
      */
-    public function getAlbum();
+    public function getAlbum(): mixed;
 
     /**
-     * @return \Closure|string
+     * @return mixed
      */
-    public function getPlaytime();
+    public function getPlaytime(): mixed;
 
     /**
-     * @return array|\Closure
+     * @return mixed
      */
-    public function getGenres();
+    public function getGenres(): mixed;
 
     /**
-     * @return \Closure|null
+     * @return mixed
      */
-    public function getArtist();
+    public function getArtist(): mixed;
 
     /**
-     * @return \Closure|null
+     * @return mixed
      */
-    public function getComposer();
+    public function getComposer(): mixed;
 
     /**
-     * @return \Closure|null
+     * @return mixed
      */
-    public function getTrackNumber();
+    public function getTrackNumber(): mixed;
 
     /**
-     * @return \Closure|null
+     * @return mixed
      */
-    public function getCopyrightInfo();
+    public function getCopyrightInfo(): mixed;
 
     /**
-     * @return \Closure|null
+     * @return mixed
      */
-    public function getFileFormat();
+    public function getFileFormat(): mixed;
 
     /**
      * @param string $path
