@@ -5,8 +5,9 @@ namespace Plutuss\Services;
 use Illuminate\Http\UploadedFile;
 use Plutuss\Response\MediaAnalyzerResponseInterface;
 
-interface MediaAnalyzerServicesInterface
+interface MediaAnalyzerServiceInterface
 {
+
     /**
      * @param UploadedFile $file
      * @return MediaAnalyzerResponseInterface

@@ -94,6 +94,7 @@ class MediaAnalyzerController extends Controller
     
     $media->getFileFormat();
     
+     $media->getNestedValue('key.array')
 
 ```
 
@@ -135,13 +136,10 @@ class MediaAnalyzerController extends Controller
           "fileformat" => "quicktime"
           "video" => array:11 [▼
             "dataformat" => "quicktime"
-            "rotate" => 0
             "resolution_x" => 1920.0
             "resolution_y" => 1080.0
             "codec" => "H.264"
             "bits_per_sample" => 24
-            "lossless" => false
-            "pixel_aspect_ratio" => 1.0
             "frame_rate" => 25.0
             "bitrate" => 50294133.891213
             "compression_ratio" => 0.040424168829743
@@ -150,6 +148,6 @@ class MediaAnalyzerController extends Controller
           "comments" => array:1 [▶]
 
 
-    $media->getNestedValue('video.codec')
-    $media->getNestedValue('video.resolution_x')
+    $media->getNestedValue('video.codec')  // H.264
+    $media->getNestedValue('video.resolution_x')   //  1920.0
 ```

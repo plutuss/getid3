@@ -12,7 +12,7 @@ use Plutuss\Response\MediaAnalyzerResponseInterface;
  * @method static MediaAnalyzerResponseInterface fromLocalFile(string $path, string $disk = null)
  *
  *
- * @see \Plutuss\Services\MediaAnalyzerServicesInterface
+ * @see \Plutuss\Services\MediaAnalyzerServiceInterface
  */
 class MediaAnalyzer extends Facade
 {

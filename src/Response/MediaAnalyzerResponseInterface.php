@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 
 interface MediaAnalyzerResponseInterface
 {
+
     /**
      * @return Collection|null
      */

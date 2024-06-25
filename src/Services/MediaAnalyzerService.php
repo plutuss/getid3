@@ -11,10 +11,8 @@ use Plutuss\Response\MediaAnalyzerResponse;
 use Plutuss\Response\MediaAnalyzerResponseInterface;
 
 
-class MediaAnalyzerService implements MediaAnalyzerServicesInterface
+class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 {
-
-    protected \getID3 $getID3;
 
     protected string $file;
     protected ?string $original_filename;
@@ -25,9 +23,10 @@ class MediaAnalyzerService implements MediaAnalyzerServicesInterface
 
     private Collection|array|null $info = null;
 
-    public function __construct()
+    public function __construct(
+        protected \getID3 $getID3
+    )
     {
-        $this->getID3 = new \getID3;
     }
 
 
@@ -102,9 +101,7 @@ class MediaAnalyzerService implements MediaAnalyzerServicesInterface
 
         $storage = Storage::disk($this->getFilesystemsDisk($disk));
 
-        if (!$storage->exists($path)) {
-            throw new \Exception(sprintf('File at path %s not found', $path));
-        }
+        $this->fileExists($path, $storage);
 
         return new MediaAnalyzerResponse(
             $this->setData(
@@ -113,6 +110,20 @@ class MediaAnalyzerService implements MediaAnalyzerServicesInterface
                 fp: $storage->readStream($path)
             )->getAnalyze()
         );
+    }
+
+    /**
+     * @param string $path
+     * @param $storage
+     * @return void
+     * @throws \Exception
+     */
+    private function fileExists(string $path, $storage): void
+    {
+        if (!$storage->exists($path)) {
+            throw new \Exception(sprintf('File at path %s not found', $path), 404);
+        }
+
     }
 
     private function getFilesystemsDisk(?string $disk)

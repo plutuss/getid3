@@ -4,14 +4,21 @@ namespace Plutuss\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Plutuss\Services\MediaAnalyzerService;
-use Plutuss\Services\MediaAnalyzerServicesInterface;
+use Plutuss\Services\MediaAnalyzerServiceInterface;
 
 class GetId3ServiceProvider extends ServiceProvider
 {
+
+    /**
+     * @return void
+     */
     public function register(): void
     {
-        $this->app->singleton('getid3.media', MediaAnalyzerServicesInterface::class);
-        $this->app->singleton(MediaAnalyzerServicesInterface::class, MediaAnalyzerService::class);
+        $this->app->singleton('getid3.media', MediaAnalyzerServiceInterface::class);
+
+        $this->app->singleton(MediaAnalyzerServiceInterface::class, function ($app) {
+            return new MediaAnalyzerService(new \getID3);
+        });
     }
 
     /**
