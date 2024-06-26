@@ -94,7 +94,7 @@ class MediaAnalyzerController extends Controller
     
     $media->getFileFormat();
     
-     $media->getNestedValue('key.array')
+    $media->getNestedValue('key.array')
 
 ```
 
