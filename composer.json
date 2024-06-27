@@ -4,6 +4,7 @@
     "keywords": [
         "laravel",
         "getid3",
+        "getid3-laravel",
         "audio",
         "mp4",
         "mp3",
@@ -20,7 +21,8 @@
         }
     ],
     "require": {
-        "james-heinrich/getid3": "^1.9"
+        "james-heinrich/getid3": "^1.9",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0"
     },
     "autoload": {
         "psr-4": {
