@@ -49,9 +49,12 @@ trait HasInfoFile
     }
 
 
+    /**
+     * @return array|Collection
+     */
     public function getResolution(): array|Collection
     {
-        $data = $this->data;
+
         if (!$this->hasData('video')) {
             return [];
         }
