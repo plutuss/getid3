@@ -22,10 +22,7 @@ trait HasInfoFile
      */
     private function hasData(string $key): bool
     {
-        if ($this->data->has($key)) {
-            return true;
-        }
-        return false;
+        return $this->data->has($key);
     }
 
 
@@ -34,10 +31,7 @@ trait HasInfoFile
      */
     public function getComments(): mixed
     {
-        if ($this->hasData('comments')) {
-            return $this->getNestedValue('comments');
-        }
-        return [];
+        return $this->getNestedValue('comments', []);
     }
 
     /**
@@ -70,11 +64,9 @@ trait HasInfoFile
      */
     public function getImage(): mixed
     {
-        $data = $this->data;
+        header('Content-Type: ' . Arr::get($this->getComments(), 'picture.0.image_mime'));
 
-        header('Content-Type: ' . Arr::get($data->get('comments'), 'picture.0.image_mime'));
-
-        return Arr::get($data->get('comments'), 'picture.0.data');
+        return Arr::get($this->getComments(), 'picture.0.data');
 
     }
 
