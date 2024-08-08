@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "james-heinrich/getid3": "^1.9",
+        "james-heinrich/getid3": "^v2.0.0-beta6",
         "illuminate/support": "^8.0|^9.0|^10.0|^11.0"
     },
     "autoload": {
