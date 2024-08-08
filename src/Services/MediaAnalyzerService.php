@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use JamesHeinrich\GetID3\GetID3;
 use Plutuss\Response\MediaAnalyzerResponse;
 use Plutuss\Response\MediaAnalyzerResponseInterface;
 
@@ -24,7 +25,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     private Collection|array|null $info = null;
 
     public function __construct(
-        protected \getID3 $getID3
+        protected GetID3 $getID3
     )
     {
     }
@@ -73,7 +74,8 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
         }
 
-        \getid3_lib::CopyTagsToComments($this->info);
+        $this->getID3
+            ->CopyTagsToComments($this->info);
 
         return $this->info = collect($this->info);
     }
