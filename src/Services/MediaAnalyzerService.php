@@ -22,6 +22,10 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
     protected $fp;
 
+    private string $path;
+
+    private string $disk;
+
     private Collection|array|null $info = null;
 
     public function __construct(
@@ -93,15 +97,19 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      * @param string|null $disk
      * @return MediaAnalyzerResponseInterface
      * @throws \Exception
      */
-    public function fromLocalFile(string $path, string $disk = null): MediaAnalyzerResponseInterface
+    public function fromLocalFile(string $path = null, string $disk = null): MediaAnalyzerResponseInterface
     {
+        if ($path) $this->path = $path;
+        if ($disk) $this->disk = $disk;
 
-        $storage = Storage::disk($this->getFilesystemsDisk($disk));
+        $storage = Storage::disk(
+            $this->getFilesystemsDisk($disk)
+        );
 
         $this->fileExists($path, $storage);
 
@@ -112,6 +120,26 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
                 fp: $storage->readStream($path)
             )->getAnalyze()
         );
+    }
+
+    /**
+     * @param string $path
+     * @return $this
+     */
+    public function setPath(string $path): static
+    {
+        $this->path = $path;
+        return $this;
+    }
+
+    /**
+     * @param string $disk
+     * @return $this
+     */
+    public function setDisk(string $disk): static
+    {
+        $this->disk = $disk;
+        return $this;
     }
 
     /**

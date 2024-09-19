@@ -15,9 +15,21 @@ interface MediaAnalyzerServiceInterface
     public function uploadFile(UploadedFile $file): MediaAnalyzerResponseInterface;
 
     /**
-     * @param string $path
+     * @param string|null $path
      * @param string|null $disk
      * @return MediaAnalyzerResponseInterface
      */
-    public function fromLocalFile(string $path, string $disk = null): MediaAnalyzerResponseInterface;
+    public function fromLocalFile(string $path = null, string $disk = null): MediaAnalyzerResponseInterface;
+
+    /**
+     * @param string $path
+     * @return $this
+     */
+    public function setPath(string $path): static;
+
+    /**
+     * @param string $disk
+     * @return $this
+     */
+    public function setDisk(string $disk): static;
 }
