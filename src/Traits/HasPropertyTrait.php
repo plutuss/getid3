@@ -9,7 +9,12 @@ trait HasPropertyTrait
 
     public function __get(string $name)
     {
-        return collect($this->data->get($name));
+        if (is_array($this->data->get($name))) {
+            return collect($this->data->get($name));
+        }
+
+        return $this->data->get($name);
+
     }
 
     /**
