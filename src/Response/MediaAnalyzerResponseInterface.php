@@ -84,4 +84,17 @@ interface MediaAnalyzerResponseInterface
      * @return mixed
      */
     public function getNestedValue(string $path, mixed $default = null): mixed;
+
+
+    /**
+     * @return mixed|string
+     */
+    public function getPlaytimeSeconds(): mixed;
+
+
+    /**
+     * @param bool $withNumber
+     * @return mixed|null
+     */
+    public function getFileSize(bool $withNumber = false): mixed;
 }
