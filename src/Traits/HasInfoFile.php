@@ -8,13 +8,8 @@ use Illuminate\Support\Collection;
 trait HasInfoFile
 {
 
-    /**
-     * @return string
-     */
-    public function getDuration(): string
-    {
-        return date('H:i:s', $this->getNestedValue('playtime_seconds') ?? 0);
-    }
+    use HasNumberData;
+
 
     /**
      * @param string $key
@@ -95,15 +90,6 @@ trait HasInfoFile
 
 
     /**
-     * @return mixed|string
-     */
-    public function getPlaytime(): mixed
-    {
-        return $this->getNestedValue('playtime_string') ?? '';
-    }
-
-
-    /**
      * @return array|mixed
      */
     public function getGenres(): mixed
@@ -155,6 +141,5 @@ trait HasInfoFile
     {
         return $this->getNestedValue('fileformat') ?? null;
     }
-
 
 }
