@@ -3,6 +3,7 @@
 namespace Plutuss\Services;
 
 
+use finfo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -94,6 +95,32 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         return new MediaAnalyzerResponse(
             $this->setData($file)->getAnalyze()
         );
+    }
+
+    /**
+     * @param string $url
+     * @return MediaAnalyzerResponseInterface
+     */
+    public function fromUrlFile(string $url): MediaAnalyzerResponseInterface
+    {
+
+        $file = file_get_contents($url);
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+        $info = $finfo->buffer($file);
+
+        $name = time() . '.' . explode('/', $info)[1];
+
+        $path = 'tmp/' . $name;
+
+        Storage::disk('public')->put($path, $file);
+
+        $response = $this->fromLocalFile($path, 'public');
+
+        Storage::delete($path);
+
+        return $response;
     }
 
     /**

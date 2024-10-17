@@ -32,4 +32,10 @@ interface MediaAnalyzerServiceInterface
      * @return $this
      */
     public function setDisk(string $disk): static;
+
+    /**
+     * @param string $url
+     * @return MediaAnalyzerResponseInterface
+     */
+    public function fromUrlFile(string $url): MediaAnalyzerResponseInterface;
 }
