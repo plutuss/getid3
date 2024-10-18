@@ -42,21 +42,26 @@ class MediaAnalyzerController extends Controller
     // To add a file locally it must be in storage.
     // So that the Storage facade can read it.
     // The default disk value is taken from the .env file FILESYSTEM_DISK
-     MediaAnalyzer::fromLocalFile('/video.mov')->getAllInfo();
-     
-      // OR
+      $media = MediaAnalyzer::fromLocalFile('/video.mov');
       
-     MediaAnalyzer::fromLocalFile(
-         path: 'files/video.mov',
-         disk: 'public',  // "local", "ftp", "sftp", "s3"
-     )->getAllInfo();
-     
-     
-     // Request file
-     MediaAnalyzer::uploadFile($request->file('video'))->getAllInfo();
-     
+      $media->getAllInfo();  
+          // OR
+          
+      $media = MediaAnalyzer::fromLocalFile(
+             path: 'files/video.mov',
+             disk: 'public',  // "local", "ftp", "sftp", "s3"
+         );
+         
+      $media->getAllInfo();  
+         
+         
+         // Request file
+      $media = MediaAnalyzer::uploadFile($request->file('video'));
+      
+      $media->getAllInfo();
+  
     }
-
+  
 }
 
 ```
@@ -94,7 +99,7 @@ class MediaAnalyzerController extends Controller
     
     $media->getFileFormat();
     
-    $media->getNestedValue('key.array')
+    $media->getNestedValue('array.key')
 
 ```
 
@@ -150,4 +155,20 @@ class MediaAnalyzerController extends Controller
 
     $media->getNestedValue('video.codec')  // H.264
     $media->getNestedValue('video.resolution_x')   //  1920.0
+```
+
+
+- Easy to use: Just pass a URL and get structured metadata
+- Supports multiple media types: Images, videos, and audio files
+```php
+
+     $url = 'https://www.example.com/filename.mp3';
+     
+     $media = MediaAnalyzer::fromUrl($url)
+     
+     $media->getAllInfo(); 
+     
+     // or
+     $media->getNestedValue('array.key')  
+
 ```
