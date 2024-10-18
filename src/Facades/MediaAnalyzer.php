@@ -13,7 +13,7 @@ use Plutuss\Services\MediaAnalyzerServiceInterface;
  * @method static MediaAnalyzerResponseInterface fromLocalFile(string $path, string $disk = null)
  * @method static MediaAnalyzerServiceInterface setDisk(string $disk)
  * @method static MediaAnalyzerServiceInterface setPath(string $path)
- * @method static MediaAnalyzerServiceInterface fromUrlFile(string $url)
+ * @method static MediaAnalyzerServiceInterface fromUrl(string $url)
  *
  *
  * @see \Plutuss\Services\MediaAnalyzerServiceInterface

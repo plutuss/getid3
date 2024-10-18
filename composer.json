@@ -22,7 +22,8 @@
     ],
     "require": {
         "james-heinrich/getid3": "^v2.0.0-beta6",
-        "illuminate/support": "^8.0|^9.0|^10.0|^11.0"
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+        "ext-fileinfo": "*"
     },
     "autoload": {
         "psr-4": {

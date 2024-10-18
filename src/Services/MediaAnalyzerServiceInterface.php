@@ -37,5 +37,5 @@ interface MediaAnalyzerServiceInterface
      * @param string $url
      * @return MediaAnalyzerResponseInterface
      */
-    public function fromUrlFile(string $url): MediaAnalyzerResponseInterface;
+    public function fromUrl(string $url): MediaAnalyzerResponseInterface;
 }
