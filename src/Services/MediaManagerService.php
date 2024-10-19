@@ -3,11 +3,12 @@
 namespace Plutuss\Services;
 
 use finfo;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 
 class MediaManagerService implements MediaManagerServiceInterface
 {
-    private \Illuminate\Contracts\Filesystem\Filesystem $storage;
+    private Filesystem $storage;
     private $file;
     private string $name;
 
@@ -15,8 +16,8 @@ class MediaManagerService implements MediaManagerServiceInterface
 
 
     public function __construct(
-        protected string $url,
-        private string $disk
+        protected readonly string $url,
+        private readonly string   $disk
     )
     {
         $this->storage = Storage::disk($this->getDisk());
