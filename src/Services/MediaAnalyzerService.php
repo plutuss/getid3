@@ -103,13 +103,13 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     public function fromUrl(string $url): MediaAnalyzerResponseInterface
     {
 
-        $service = new MediaManagerService($url);
+        $service = new MediaManagerService($url, $this->getFilesystemsDisk());
 
         $service->handler();
 
         $response = $this->fromLocalFile(
             $service->getPath(),
-            'public');
+            $this->getFilesystemsDisk());
 
         $service->delete();
 
@@ -128,7 +128,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         if ($disk) $this->disk = $disk;
 
         $storage = Storage::disk(
-            $this->getFilesystemsDisk($this->disk)
+            $this->getFilesystemsDisk()
         );
 
         $this->fileExists($this->path, $storage);
@@ -149,6 +149,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     public function setPath(string $path): static
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -159,6 +160,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     public function setDisk(string $disk): static
     {
         $this->disk = $disk;
+
         return $this;
     }
 
@@ -177,9 +179,9 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
     }
 
-    private function getFilesystemsDisk(?string $disk)
+    protected function getFilesystemsDisk(): string
     {
-        return empty($disk) ? config('filesystems.default') : $disk;
+        return $this->disk ??= config('filesystems.default');
     }
 
 

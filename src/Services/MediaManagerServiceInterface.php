@@ -16,4 +16,6 @@ interface MediaManagerServiceInterface
     public function getName(): string;
 
     public function getFile(): mixed;
+
+    public function getDisk(): string;
 }

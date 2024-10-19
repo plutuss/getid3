@@ -10,14 +10,16 @@ class MediaManagerService implements MediaManagerServiceInterface
     private \Illuminate\Contracts\Filesystem\Filesystem $storage;
     private $file;
     private string $name;
+
     private string $path;
 
 
     public function __construct(
-        protected string $url
+        protected string $url,
+        private string $disk
     )
     {
-        $this->storage = Storage::disk(config('filesystems.default'));
+        $this->storage = Storage::disk($this->getDisk());
     }
 
     public function handler(): void
@@ -70,4 +72,8 @@ class MediaManagerService implements MediaManagerServiceInterface
         return $this->file;
     }
 
+    public function getDisk(): string
+    {
+        return $this->disk;
+    }
 }
