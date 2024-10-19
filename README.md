@@ -27,6 +27,7 @@
 ## Use Facade MediaAnalyzer
 - uploadFile()
 - fromLocalFile()
+- fromUrl()
  
 ```php
 <?php
@@ -45,8 +46,8 @@ class MediaAnalyzerController extends Controller
       $media = MediaAnalyzer::fromLocalFile('/video.mov');
       
       $media->getAllInfo();  
+
           // OR
-          
       $media = MediaAnalyzer::fromLocalFile(
              path: 'files/video.mov',
              disk: 'public',  // "local", "ftp", "sftp", "s3"
@@ -65,6 +66,22 @@ class MediaAnalyzerController extends Controller
 }
 
 ```
+
+- Easy to use: Just pass a URL and get structured metadata
+- Supports multiple media types: Images, videos, and audio files
+```php
+
+     $url = 'https://www.example.com/filename.mp3';
+     
+     $media = MediaAnalyzer::fromUrl($url)
+     
+     $media->getAllInfo(); 
+     
+     // or
+     $media->getNestedValue('array.key')  
+
+```
+
 
 - List of available methods
 ```php
@@ -157,18 +174,3 @@ class MediaAnalyzerController extends Controller
     $media->getNestedValue('video.resolution_x')   //  1920.0
 ```
 
-
-- Easy to use: Just pass a URL and get structured metadata
-- Supports multiple media types: Images, videos, and audio files
-```php
-
-     $url = 'https://www.example.com/filename.mp3';
-     
-     $media = MediaAnalyzer::fromUrl($url)
-     
-     $media->getAllInfo(); 
-     
-     // or
-     $media->getNestedValue('array.key')  
-
-```
