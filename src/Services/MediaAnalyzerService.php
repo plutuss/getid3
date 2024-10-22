@@ -65,20 +65,11 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
             $this->original_filename,
             $this->fp);
 
-        if (!Arr::has($this->info, ['comments', 'tags'])) {
-            $this->info = Arr::has($this->info, 'id3v2.comments') ?
-                Arr::set($this->info, 'tags.id3v2', Arr::get($this->info, 'id3v2.comments')) : $this->info;
-        };
+        $this->infoHasCommentsOrTags();
 
+        $this->infoHasId3V2orId3V1();
 
-        if (!Arr::has($this->info, ['id3v2', 'id3v1'])) {
-            $this->info = Arr::has($this->info, 'id3v1.comments') ?
-                Arr::set($this->info, 'tags.id3v1', Arr::get($this->info, 'id3v1.comments')) : $this->info;
-
-        }
-
-        $this->getID3
-            ->CopyTagsToComments($this->info);
+        $this->getID3->CopyTagsToComments($this->info);
 
         return $this->info = collect($this->info);
     }
@@ -182,6 +173,29 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     protected function getFilesystemsDisk(): string
     {
         return $this->disk ??= config('filesystems.default');
+    }
+
+    /**
+     * @return void
+     */
+    private function infoHasCommentsOrTags(): void
+    {
+        if (!Arr::has($this->info, ['comments', 'tags'])) {
+            $this->info = Arr::has($this->info, 'id3v2.comments') ?
+                Arr::set($this->info, 'tags.id3v2', Arr::get($this->info, 'id3v2.comments')) : $this->info;
+        };
+    }
+
+    /**
+     * @return void
+     */
+    private function infoHasId3V2orId3V1(): void
+    {
+        if (!Arr::has($this->info, ['id3v2', 'id3v1'])) {
+            $this->info = Arr::has($this->info, 'id3v1.comments') ?
+                Arr::set($this->info, 'tags.id3v1', Arr::get($this->info, 'id3v1.comments')) : $this->info;
+
+        }
     }
 
 

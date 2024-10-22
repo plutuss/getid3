@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 class MediaManagerService implements MediaManagerServiceInterface
 {
     private Filesystem $storage;
-    private $file;
+    private mixed $file;
     private string $name;
 
     private string $path;
