@@ -25,6 +25,6 @@ class MediaAnalyzer extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'getid3.media';
+        return MediaAnalyzerServiceInterface::class;
     }
 }

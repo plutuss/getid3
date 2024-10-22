@@ -15,9 +15,8 @@ class GetId3ServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton('getid3.media', MediaAnalyzerServiceInterface::class);
 
-        $this->app->singleton(MediaAnalyzerServiceInterface::class, function ($app) {
+        $this->app->singleton(MediaAnalyzerServiceInterface::class, function ($app): MediaAnalyzerServiceInterface {
             return new MediaAnalyzerService(new GetID3);
         });
     }
