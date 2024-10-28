@@ -15,6 +15,9 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 {
 
     protected string $file;
+
+    private MediaManagerService $service;
+    protected bool $saveFileFromUrl = false;
     protected ?string $original_filename;
 
     protected int|string|null $filesize;
@@ -94,15 +97,17 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     public function fromUrl(string $url): MediaAnalyzerResponseInterface
     {
 
-        $service = new MediaManagerService($url, $this->getFilesystemsDisk());
+        $this->service = new MediaManagerService($url, $this->getFilesystemsDisk());
 
-        $service->handler();
+        $this->service->handler();
 
         $response = $this->fromLocalFile(
-            $service->getPath(),
+            $this->service->getPath(),
             $this->getFilesystemsDisk());
 
-        $service->delete();
+        if (!$this->saveFileFromUrl) {
+            $this->service->delete();
+        }
 
         return $response;
     }
@@ -198,5 +203,27 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         }
     }
 
+
+    /**
+     * @param bool $saveFileFromUrl
+     * @return static
+     */
+    public function saveFileFromUrl(bool $saveFileFromUrl = true): static
+    {
+        $this->saveFileFromUrl = $saveFileFromUrl;
+        return $this;
+    }
+
+    public function setFileName(string $name): static
+    {
+        $this->service->setName($name);
+        return $this;
+    }
+
+    public function setFilePath(string $path): static
+    {
+        $this->service->setPath($path);
+        return $this;
+    }
 
 }

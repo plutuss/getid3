@@ -12,7 +12,7 @@ class MediaManagerService implements MediaManagerServiceInterface
     private mixed $file;
     private string $name;
 
-    private string $path;
+    private string $path = 'tmp/';
 
 
     public function __construct(
@@ -47,7 +47,8 @@ class MediaManagerService implements MediaManagerServiceInterface
         $data = explode('/', $info);
 
         if (array_key_exists(1, $data)) {
-            $this->name = time() . '.' . $data[1];
+            $name = $this->name ?? time();
+            $this->name = $name . '.' . $data[1];
             return;
         }
 
@@ -57,7 +58,7 @@ class MediaManagerService implements MediaManagerServiceInterface
 
     public function getPath(): string
     {
-        return $this->path = 'tmp/' . $this->name;
+        return $this->path .= $this->name;
     }
 
     public function delete(): void
@@ -76,5 +77,19 @@ class MediaManagerService implements MediaManagerServiceInterface
     public function getDisk(): string
     {
         return $this->disk;
+    }
+
+    public function setPath(string $path): static
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }
