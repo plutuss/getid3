@@ -82,6 +82,21 @@ class MediaAnalyzerController extends Controller
 
 ```
 
+```php
+    $url = 'https://www.example.com/filename.mp3';
+    
+    // The methods only works on the file by reference
+    // setFilePath()
+    // setFileName()
+    
+    MediaAnalyzer::saveFileFromUrl(true) // Default false, if you want to save the file using the link
+            ->setDisk('public')          // You specify which disk
+            ->setFilePath('images/')     // You specify which path for the file
+            ->setFileName('img')         // You specify what name for the file
+            ->fromUrl($url);
+
+```
+
 
 - List of available methods
 ```php

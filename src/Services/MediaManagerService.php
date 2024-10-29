@@ -12,13 +12,13 @@ class MediaManagerService implements MediaManagerServiceInterface
     private mixed $file;
     private string $name;
 
-    private string $path;
+    private string $path = 'tmp/';
+
+    protected string $url;
+    private string $disk;
 
 
-    public function __construct(
-        protected readonly string $url,
-        private readonly string   $disk
-    )
+    private function initStorage(): void
     {
         $this->storage = Storage::disk($this->getDisk());
     }
@@ -28,6 +28,10 @@ class MediaManagerService implements MediaManagerServiceInterface
         $this->file = file_get_contents($this->url);
 
         $this->initName();
+
+        $this->initStorage();
+
+        $this->initFullPath();
 
         $this->storage
             ->put($this->getPath(), $this->getFile());
@@ -47,7 +51,8 @@ class MediaManagerService implements MediaManagerServiceInterface
         $data = explode('/', $info);
 
         if (array_key_exists(1, $data)) {
-            $this->name = time() . '.' . $data[1];
+            $name = $this->name ?? time();
+            $this->name = $name . '.' . $data[1];
             return;
         }
 
@@ -57,7 +62,12 @@ class MediaManagerService implements MediaManagerServiceInterface
 
     public function getPath(): string
     {
-        return $this->path = 'tmp/' . $this->name;
+        return $this->path;
+    }
+
+    public function initFullPath(): string
+    {
+        return $this->path .= $this->name;
     }
 
     public function delete(): void
@@ -77,4 +87,34 @@ class MediaManagerService implements MediaManagerServiceInterface
     {
         return $this->disk;
     }
+
+    public function setPath(string $path): static
+    {
+        $this->path = $path;
+
+        return $this;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function setUrl(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function setDisk(string $disk): static
+    {
+        $this->disk = $disk;
+
+        return $this;
+    }
+
+
 }

@@ -38,4 +38,23 @@ interface MediaAnalyzerServiceInterface
      * @return MediaAnalyzerResponseInterface
      */
     public function fromUrl(string $url): MediaAnalyzerResponseInterface;
+
+
+    /**
+     * @param bool $saveFileFromUrl
+     * @return static
+     */
+    public function saveFileFromUrl(bool $saveFileFromUrl = true): static;
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setFileName(string $name): static;
+
+    /**
+     * @param string $path
+     * @return $this
+     */
+    public function setFilePath(string $path): static;
 }

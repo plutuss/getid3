@@ -18,4 +18,9 @@ interface MediaManagerServiceInterface
     public function getFile(): mixed;
 
     public function getDisk(): string;
+
+    public function setUrl(string $url): static;
+
+    public function setDisk(string $disk): static;
+
 }
