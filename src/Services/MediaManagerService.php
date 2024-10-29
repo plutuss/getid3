@@ -14,11 +14,11 @@ class MediaManagerService implements MediaManagerServiceInterface
 
     private string $path = 'tmp/';
 
+    protected string $url;
+    private string $disk;
 
-    public function __construct(
-        protected readonly string $url,
-        private readonly string   $disk
-    )
+
+    private function initStorage(): void
     {
         $this->storage = Storage::disk($this->getDisk());
     }
@@ -28,6 +28,10 @@ class MediaManagerService implements MediaManagerServiceInterface
         $this->file = file_get_contents($this->url);
 
         $this->initName();
+
+        $this->initStorage();
+
+        $this->initFullPath();
 
         $this->storage
             ->put($this->getPath(), $this->getFile());
@@ -57,6 +61,11 @@ class MediaManagerService implements MediaManagerServiceInterface
     }
 
     public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function initFullPath(): string
     {
         return $this->path .= $this->name;
     }
@@ -92,4 +101,20 @@ class MediaManagerService implements MediaManagerServiceInterface
 
         return $this;
     }
+
+    public function setUrl(string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function setDisk(string $disk): static
+    {
+        $this->disk = $disk;
+
+        return $this;
+    }
+
+
 }

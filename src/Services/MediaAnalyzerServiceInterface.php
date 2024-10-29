@@ -46,7 +46,15 @@ interface MediaAnalyzerServiceInterface
      */
     public function saveFileFromUrl(bool $saveFileFromUrl = true): static;
 
+    /**
+     * @param string $name
+     * @return $this
+     */
     public function setFileName(string $name): static;
 
+    /**
+     * @param string $path
+     * @return $this
+     */
     public function setFilePath(string $path): static;
 }
