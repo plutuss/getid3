@@ -34,8 +34,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
     public function __construct(
         protected GetID3 $getID3
-    )
-    {
+    ) {
         $this->managerService = app(MediaManagerServiceInterface::class);
     }
 
@@ -47,11 +46,12 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @param $fp
      * @return $this
      */
-    private function setData(string     $file,
-                             int|string $filesize = null,
-                             ?string    $originalFileName = '',
-                                        $fp = null): static
-    {
+    private function setData(
+        string $file,
+        int|string $filesize = null,
+        ?string $originalFileName = '',
+        $fp = null
+    ): static {
         $this->file = $file;
         $this->filesize = $filesize;
         $this->original_filename = $originalFileName;
@@ -69,7 +69,8 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
             $this->file,
             $this->filesize,
             $this->original_filename,
-            $this->fp);
+            $this->fp
+        );
 
         $this->infoHasCommentsOrTags();
 
@@ -108,7 +109,8 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
         $response = $this->fromLocalFile(
             $this->managerService->getPath(),
-            $this->getFilesystemsDisk());
+            $this->getFilesystemsDisk()
+        );
 
         if (!$this->saveFileFromUrl) {
             $this->managerService->delete();
@@ -125,8 +127,10 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      */
     public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerResponseInterface
     {
-        if ($path) $this->path = $path;
-        if ($disk) $this->disk = $disk;
+        if ($path)
+            $this->path = $path;
+        if ($disk)
+            $this->disk = $disk;
 
         $storage = Storage::disk(
             $this->getFilesystemsDisk()
@@ -193,7 +197,8 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         if (!Arr::has($this->info, ['comments', 'tags'])) {
             $this->info = Arr::has($this->info, 'id3v2.comments') ?
                 Arr::set($this->info, 'tags.id3v2', Arr::get($this->info, 'id3v2.comments')) : $this->info;
-        };
+        }
+        ;
     }
 
     /**
@@ -216,6 +221,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     public function saveFileFromUrl(bool $saveFileFromUrl = true): static
     {
         $this->saveFileFromUrl = $saveFileFromUrl;
+
         return $this;
     }
 
