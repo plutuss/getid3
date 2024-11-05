@@ -91,8 +91,8 @@ class MediaAnalyzerController extends Controller
     
     MediaAnalyzer::saveFileFromUrl(true) // Default false, if you want to save the file using the link
             ->setDisk('public')          // You specify which disk
-            ->setFilePath('images/')     // You specify which path for the file
-            ->setFileName('img')         // You specify what name for the file
+            ->setFilePath('music/')     // You specify which path for the file
+            ->setFileName('filename')         // You specify what name for the file
             ->fromUrl($url);
 
 ```
