@@ -28,6 +28,14 @@ trait HasPropertyTrait
     }
 
     /**
+     * @return Collection|null
+     */
+    public function all(): ?Collection
+    {
+        return $this->getAllInfo();
+    }
+
+    /**
      * @param string $path
      * @param mixed $default
      * @return mixed
