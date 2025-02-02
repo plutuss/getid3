@@ -7,8 +7,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use JamesHeinrich\GetID3\GetID3;
-use Plutuss\Response\MediaAnalyzerResponse;
-use Plutuss\Response\MediaAnalyzerResponseInterface;
+use Plutuss\DTO\MediaAnalyzerDTO;
+use Plutuss\DTO\MediaAnalyzerDTOInterface;
 
 
 class MediaAnalyzerService implements MediaAnalyzerServiceInterface
@@ -84,21 +84,21 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
     /**
      * @param UploadedFile $file
-     * @return MediaAnalyzerResponseInterface
+     * @return MediaAnalyzerDTOInterface
      */
-    public function uploadFile(UploadedFile $file): MediaAnalyzerResponseInterface
+    public function uploadFile(UploadedFile $file): MediaAnalyzerDTOInterface
     {
-        return new MediaAnalyzerResponse(
+        return new MediaAnalyzerDTO(
             $this->setData($file)->getAnalyze()
         );
     }
 
     /**
      * @param string $url
-     * @return MediaAnalyzerResponseInterface
+     * @return MediaAnalyzerDTOInterface
      * @throws \Exception
      */
-    public function fromUrl(string $url): MediaAnalyzerResponseInterface
+    public function fromUrl(string $url): MediaAnalyzerDTOInterface
     {
 
         $this->managerService
@@ -122,10 +122,10 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     /**
      * @param string|null $path
      * @param string|null $disk
-     * @return MediaAnalyzerResponseInterface
+     * @return MediaAnalyzerDTOInterface
      * @throws \Exception
      */
-    public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerResponseInterface
+    public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerDTOInterface
     {
         if ($path)
             $this->path = $path;
@@ -138,7 +138,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
         $this->fileExists($this->path, $storage);
 
-        return new MediaAnalyzerResponse(
+        return new MediaAnalyzerDTO(
             $this->setData(
                 file: $this->path,
                 filesize: $storage->size($this->path),

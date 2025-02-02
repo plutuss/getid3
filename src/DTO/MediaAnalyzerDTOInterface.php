@@ -1,16 +1,21 @@
 <?php
 
-namespace Plutuss\Response;
+namespace Plutuss\DTO;
 
 use Illuminate\Support\Collection;
 
-interface MediaAnalyzerResponseInterface
+interface MediaAnalyzerDTOInterface
 {
 
     /**
      * @return Collection|null
      */
     public function getAllInfo(): ?Collection;
+
+    /**
+     * @return Collection|null
+     */
+    public function all(): ?Collection;
 
     /**
      * @return string
