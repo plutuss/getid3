@@ -24,6 +24,11 @@
  composer require plutuss/getid3-laravel
 ```
 
+```shell
+php artisan vendor:publish --provider="Plutuss\Providers\GetId3ServiceProvider"
+```
+
+
 ## Use Facade MediaAnalyzer
 - uploadFile()
 - fromLocalFile()

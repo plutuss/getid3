@@ -31,6 +31,10 @@ class GetId3ServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Load the configuration file
+
+        $this->publishes([
+            __DIR__ . '/../config/getid3.php' => config_path('getid3.php'),
+        ]);
     }
 }

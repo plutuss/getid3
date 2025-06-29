@@ -5,10 +5,12 @@ namespace Plutuss\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use JamesHeinrich\GetID3\GetID3;
 use Plutuss\DTO\MediaAnalyzerDTO;
 use Plutuss\DTO\MediaAnalyzerDTOInterface;
+use Plutuss\Exceptions\GetID3Exception;
 
 
 class MediaAnalyzerService implements MediaAnalyzerServiceInterface
@@ -34,7 +36,8 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
     public function __construct(
         protected GetID3 $getID3
-    ) {
+    )
+    {
         $this->managerService = app(MediaManagerServiceInterface::class);
     }
 
@@ -47,11 +50,12 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @return $this
      */
     private function setData(
-        string $file,
+        string     $file,
         int|string $filesize = null,
-        ?string $originalFileName = '',
-        $fp = null
-    ): static {
+        ?string    $originalFileName = '',
+                   $fp = null
+    ): static
+    {
         $this->file = $file;
         $this->filesize = $filesize;
         $this->original_filename = $originalFileName;
@@ -64,6 +68,20 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @return Collection
      */
     private function getAnalyze(): Collection
+    {
+        $key = 'getid3_' . md5($this->file) . '_' . $this->filesize;
+
+        if (config('getid3.cache')) {
+            return Cache::remember($key, config('getid3.cache_time'), fn() => $this->analyzeRaw());
+        }
+
+        return $this->analyzeRaw();
+    }
+
+    /**
+     * @return Collection
+     */
+    private function analyzeRaw(): Collection
     {
         $this->info = $this->getID3->analyze(
             $this->file,
@@ -81,7 +99,6 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         return $this->info = collect($this->info);
     }
 
-
     /**
      * @param UploadedFile $file
      * @return MediaAnalyzerDTOInterface
@@ -96,7 +113,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     /**
      * @param string $url
      * @return MediaAnalyzerDTOInterface
-     * @throws \Exception
+     * @throws GetID3Exception
      */
     public function fromUrl(string $url): MediaAnalyzerDTOInterface
     {
@@ -123,7 +140,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @param string|null $path
      * @param string|null $disk
      * @return MediaAnalyzerDTOInterface
-     * @throws \Exception
+     * @throws GetID3Exception
      */
     public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerDTOInterface
     {
@@ -174,12 +191,12 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @param string $path
      * @param $storage
      * @return void
-     * @throws \Exception
+     * @throws GetID3Exception
      */
     private function fileExists(string $path, $storage): void
     {
         if (!$storage->exists($path)) {
-            throw new \Exception(sprintf('File at path %s not found', $path), 404);
+            throw new GetID3Exception(sprintf('File at path %s not found', $path), 404);
         }
 
     }
@@ -197,8 +214,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         if (!Arr::has($this->info, ['comments', 'tags'])) {
             $this->info = Arr::has($this->info, 'id3v2.comments') ?
                 Arr::set($this->info, 'tags.id3v2', Arr::get($this->info, 'id3v2.comments')) : $this->info;
-        }
-        ;
+        };
     }
 
     /**
