@@ -3,23 +3,23 @@
 namespace Plutuss\Services;
 
 use Illuminate\Http\UploadedFile;
-use Plutuss\Response\MediaAnalyzerResponseInterface;
+use Plutuss\DTO\MediaAnalyzerDTOInterface;
 
 interface MediaAnalyzerServiceInterface
 {
 
     /**
      * @param UploadedFile $file
-     * @return MediaAnalyzerResponseInterface
+     * @return MediaAnalyzerDTOInterface
      */
-    public function uploadFile(UploadedFile $file): MediaAnalyzerResponseInterface;
+    public function uploadFile(UploadedFile $file): MediaAnalyzerDTOInterface;
 
     /**
      * @param string|null $path
      * @param string|null $disk
-     * @return MediaAnalyzerResponseInterface
+     * @return MediaAnalyzerDTOInterface
      */
-    public function fromLocalFile(string $path = null, string $disk = null): MediaAnalyzerResponseInterface;
+    public function fromLocalFile(string $path = null, string $disk = null): MediaAnalyzerDTOInterface;
 
     /**
      * @param string $path
@@ -35,9 +35,9 @@ interface MediaAnalyzerServiceInterface
 
     /**
      * @param string $url
-     * @return MediaAnalyzerResponseInterface
+     * @return MediaAnalyzerDTOInterface
      */
-    public function fromUrl(string $url): MediaAnalyzerResponseInterface;
+    public function fromUrl(string $url): MediaAnalyzerDTOInterface;
 
 
     /**

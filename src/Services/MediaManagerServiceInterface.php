@@ -2,9 +2,6 @@
 
 namespace Plutuss\Services;
 
-use Illuminate\Http\UploadedFile;
-use Plutuss\Response\MediaAnalyzerResponseInterface;
-
 interface MediaManagerServiceInterface
 {
     public function handler(): void;
