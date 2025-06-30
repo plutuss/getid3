@@ -69,7 +69,9 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      */
     private function getAnalyze(): Collection
     {
-        $key = 'getid3_' . md5($this->file) . '_' . $this->filesize;
+        $keyPrefix = config('getid3.key_prefix');
+
+        $key = $keyPrefix . '_' . md5($this->file) . '_' . $this->filesize;
 
         if (config('getid3.cache')) {
             return Cache::remember($key, config('getid3.cache_time'), fn() => $this->analyzeRaw());
