@@ -37,6 +37,9 @@ interface MediaAnalyzerDTOInterface
      */
     public function getImage(): mixed;
 
+    public function getImageData(): ?string;
+
+    public function getImageMimeType(): ?string;
 
     /**
      * @return string
@@ -90,12 +93,10 @@ interface MediaAnalyzerDTOInterface
      */
     public function getNestedValue(string $path, mixed $default = null): mixed;
 
-
     /**
      * @return mixed|string
      */
     public function getPlaytimeSeconds(): mixed;
-
 
     /**
      * @param bool $withNumber

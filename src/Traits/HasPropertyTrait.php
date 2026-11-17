@@ -45,5 +45,4 @@ trait HasPropertyTrait
         return data_get($this->getAllInfo(), $path, $default);
     }
 
-
 }

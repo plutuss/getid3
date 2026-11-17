@@ -10,8 +10,9 @@ trait HasNumberData
      */
     public function getDuration(): string
     {
-        return date('H:i:s',
-            $this->getNestedValue('playtime_seconds') ?? 0);
+        $seconds = max(0, (int) $this->getNestedValue('playtime_seconds', 0));
+
+        return sprintf('%02d:%02d:%02d', intdiv($seconds, 3600), intdiv($seconds % 3600, 60), $seconds % 60);
     }
 
     /**
@@ -29,7 +30,6 @@ trait HasNumberData
     {
         return $this->getNestedValue('playtime_seconds') ?? '';
     }
-
 
     /**
      * @param bool $withNumber

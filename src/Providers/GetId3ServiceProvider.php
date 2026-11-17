@@ -17,12 +17,12 @@ class GetId3ServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(MediaManagerServiceInterface::class, function ($app) {
-            return new MediaManagerService();
-        });
+        $this->mergeConfigFrom(__DIR__ . '/../config/getid3.php', 'getid3');
 
-        $this->app->singleton(MediaAnalyzerServiceInterface::class, function ($app): MediaAnalyzerServiceInterface {
-            return new MediaAnalyzerService(new GetID3);
+        $this->app->bind(MediaManagerServiceInterface::class, MediaManagerService::class);
+
+        $this->app->bind(MediaAnalyzerServiceInterface::class, function ($app): MediaAnalyzerServiceInterface {
+            return new MediaAnalyzerService(new GetID3(), $app->make(MediaManagerServiceInterface::class));
         });
     }
 
@@ -31,8 +31,6 @@ class GetId3ServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Load the configuration file
-
         $this->publishes([
             __DIR__ . '/../config/getid3.php' => config_path('getid3.php'),
         ]);

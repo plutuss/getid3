@@ -11,3 +11,5 @@
 /.vscode
 /ignor
 
+
+/composer.lock
