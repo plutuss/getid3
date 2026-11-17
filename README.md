@@ -1,7 +1,43 @@
-# getID3 for Laravel
+# getID3 for Laravel — media metadata and upload validation
 
 Extract audio, video and image metadata with a Laravel wrapper around
 [james-heinrich/getid3](https://github.com/JamesHeinrich/getID3).
+
+**`plutuss/getid3-laravel`** provides a Laravel facade, typed audio/video metadata,
+Storage integration and fluent validation rules for uploaded media.
+
+[View on Packagist](https://packagist.org/packages/plutuss/getid3-laravel) ·
+[Source on GitHub](https://github.com/plutuss/getid3)
+
+## When to use this package
+
+- Get MP3 or MP4 duration in seconds, video resolution, codecs and audio properties.
+- Read music metadata such as ID3 tags, artist, album, title and embedded cover art.
+- Validate Laravel uploads by media type, duration, resolution and audio presence.
+- Analyze files from Laravel Storage disks, uploaded files or HTTP/HTTPS URLs.
+- Cache analysis results using file content or file metadata.
+
+Format support and available metadata depend on getID3 and the input file.
+This package analyzes metadata; it does not transcode media or generate thumbnails.
+
+## Quick start
+
+```shell
+composer require plutuss/getid3-laravel:^2.1
+```
+
+```php
+use Plutuss\Facades\MediaAnalyzer;
+
+$media = MediaAnalyzer::fromLocalFile('videos/example.mp4')->throwIfErrors();
+
+$seconds = $media->getDurationSeconds();
+$width = $media->getVideoMetadata()?->getDisplayWidth();
+$hasAudio = $media->hasAudio();
+```
+
+The path is relative to your default Laravel Storage disk. See below for uploaded
+files, other disks, URL downloads and validation rules.
 
 ## Requirements
 
