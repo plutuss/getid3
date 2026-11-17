@@ -17,6 +17,7 @@
 - Unique default download names and support for directories without a trailing slash.
 - Regression tests using generated WAV data, fake disks and in-memory HTTP streams.
 - CI for Laravel 11–13 and a tag-triggered release workflow gated by the test matrix.
+- Release pull request creation through the repository workflow token.
 - Usage, configuration and upgrade documentation.
 
 ### Fixed

@@ -197,8 +197,11 @@ Composer's security checks enabled.
 
 Changes are recorded in [CHANGELOG.md](CHANGELOG.md). Maintainers publish a numeric
 semantic version tag such as `2.0.0` on the commit to release. The release workflow
-runs the test matrix and creates a GitHub release from the matching changelog
-section only after all jobs pass. Composer obtains the package version from the
+runs the test matrix, opens a pull request from `release/<version>` to the default
+branch, and creates a GitHub release from the matching changelog section after
+tests pass. Opening the PR requires the repository setting that allows GitHub
+Actions to create pull requests; a PR permission failure does not block release
+publication. Composer obtains the package version from the
 tag; no `version` field is maintained in `composer.json`.
 
 ## License

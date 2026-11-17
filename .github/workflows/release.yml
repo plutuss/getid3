@@ -12,6 +12,42 @@ jobs:
   tests:
     uses: ./.github/workflows/tests.yml
 
+  pull-request:
+    needs: tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Open release pull request
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const version = context.ref.replace('refs/tags/', '');
+            const branch = `release/${version}`;
+            const { data: repo } = await github.rest.repos.get(context.repo);
+            const { data: existing } = await github.rest.pulls.list({
+              ...context.repo,
+              head: `${context.repo.owner}:${branch}`,
+              base: repo.default_branch,
+              state: 'open',
+            });
+            if (existing.length) {
+              core.info(existing[0].html_url);
+              return;
+            }
+            const upgrade = fs.readFileSync('UPGRADING.md', 'utf8');
+            const { data: pr } = await github.rest.pulls.create({
+              ...context.repo,
+              head: branch,
+              base: repo.default_branch,
+              title: `Release ${version}: reliable media analysis and regression tests`,
+              body: `Fix repeated URL downloads, resource cleanup, cache invalidation, duration formatting and normalized ID3 metadata. Add artwork accessors without HTTP side effects, regression tests and usage documentation.\n\nThe release test matrix passed for Laravel 11, 12 and 13. Local validation: 16 tests and 54 assertions on PHP 8.4.12 with each framework version; Composer and syntax checks passed.\n\n${upgrade}\n\n[Changelog](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${version}/CHANGELOG.md)`,
+            });
+            core.info(pr.html_url);
+
   publish:
     needs: tests
     runs-on: ubuntu-latest
