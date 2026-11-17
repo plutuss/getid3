@@ -43,6 +43,10 @@ class GetId3ServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'getid3');
+        $this->publishes([
+            __DIR__ . '/../lang' => $this->app->langPath('vendor/getid3'),
+        ], 'getid3-translations');
         $this->publishes([
             __DIR__ . '/../config/getid3.php' => config_path('getid3.php'),
         ]);
