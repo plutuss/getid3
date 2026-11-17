@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use JamesHeinrich\GetID3\GetID3;
 use Plutuss\DTO\MediaAnalyzerDTO;
-use Plutuss\DTO\MediaAnalyzerDTOInterface;
+use Plutuss\DTO\MediaMetadataInterface;
 use Plutuss\Exceptions\GetID3Exception;
 
 class MediaAnalyzerService implements MediaAnalyzerServiceInterface
@@ -113,7 +113,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @param UploadedFile $file
      * @return MediaAnalyzerDTOInterface
      */
-    public function uploadFile(UploadedFile $file): MediaAnalyzerDTOInterface
+    public function uploadFile(UploadedFile $file): MediaMetadataInterface
     {
         return new MediaAnalyzerDTO(
             $this->setData($file->getPathname(), $file->getSize(), $file->getClientOriginalName())->getAnalyze()
@@ -125,7 +125,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @return MediaAnalyzerDTOInterface
      * @throws GetID3Exception
      */
-    public function fromUrl(string $url): MediaAnalyzerDTOInterface
+    public function fromUrl(string $url): MediaMetadataInterface
     {
         $this->managerService
             ->setUrl($url)
@@ -150,7 +150,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @return MediaAnalyzerDTOInterface
      * @throws GetID3Exception
      */
-    public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerDTOInterface
+    public function fromLocalFile(?string $path = null, ?string $disk = null): MediaMetadataInterface
     {
         if ($path !== null) {
             $this->path = $path;
