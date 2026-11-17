@@ -19,7 +19,7 @@ interface MediaAnalyzerServiceInterface
      * @param string|null $disk
      * @return MediaAnalyzerDTOInterface
      */
-    public function fromLocalFile(string $path = null, string $disk = null): MediaAnalyzerDTOInterface;
+    public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerDTOInterface;
 
     /**
      * @param string $path
@@ -38,7 +38,6 @@ interface MediaAnalyzerServiceInterface
      * @return MediaAnalyzerDTOInterface
      */
     public function fromUrl(string $url): MediaAnalyzerDTOInterface;
-
 
     /**
      * @param bool $saveFileFromUrl

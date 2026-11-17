@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    uses: ./.github/workflows/tests.yml
+
+  publish:
+    needs: tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish release from changelog
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const version = context.ref.replace('refs/tags/', '');
+            if (!/^\d+\.\d+\.\d+$/.test(version)) {
+              throw new Error(`Unsupported release tag: ${version}`);
+            }
+            const changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+            const heading = `## [${version}]`;
+            const start = changelog.split('\n').findIndex(line => line.startsWith(`${heading} - `));
+            if (start < 0) throw new Error(`Missing changelog section for ${version}`);
+            const lines = changelog.split('\n').slice(start + 1);
+            const end = lines.findIndex(line => line.startsWith('## ') || /^\[\d/.test(line));
+            const notes = (end < 0 ? lines : lines.slice(0, end)).join('\n').trim();
+            if (!notes) throw new Error('Release notes must not be empty');
+            try {
+              const existing = await github.rest.repos.getReleaseByTag({
+                ...context.repo, tag: version,
+              });
+              core.info(`Release already exists: ${existing.data.html_url}`);
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              const result = await github.rest.repos.createRelease({
+                ...context.repo,
+                tag_name: version,
+                target_commitish: context.sha,
+                name: version,
+                body: `${notes}\n\n[Upgrade guide](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${version}/UPGRADING.md)\n\n[Full changelog](https://github.com/${context.repo.owner}/${context.repo.repo}/compare/1.5.0...${version})`,
+                draft: false,
+                prerelease: false,
+                make_latest: 'true',
+              });
+              core.info(result.data.html_url);
+            }

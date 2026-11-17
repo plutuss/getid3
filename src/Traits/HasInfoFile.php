@@ -10,7 +10,6 @@ trait HasInfoFile
 
     use HasNumberData;
 
-
     /**
      * @param string $key
      * @return bool
@@ -19,7 +18,6 @@ trait HasInfoFile
     {
         return $this->data->has($key);
     }
-
 
     /**
      * @return array|mixed
@@ -36,7 +34,6 @@ trait HasInfoFile
     {
         return $this->getComments();
     }
-
 
     /**
      * @return array|Collection
@@ -59,10 +56,23 @@ trait HasInfoFile
      */
     public function getImage(): mixed
     {
-        header('Content-Type: ' . Arr::get($this->getComments(), 'picture.0.image_mime'));
+        $mime = $this->getImageMimeType();
+        if ($mime !== null) {
+            header('Content-Type: ' . $mime);
+        }
 
+        return $this->getImageData();
+    }
+
+    /** Return embedded artwork without changing the HTTP response. */
+    public function getImageData(): ?string
+    {
         return Arr::get($this->getComments(), 'picture.0.data');
+    }
 
+    public function getImageMimeType(): ?string
+    {
+        return Arr::get($this->getComments(), 'picture.0.image_mime');
     }
 
     /**
@@ -73,12 +83,11 @@ trait HasInfoFile
         $title = Arr::get($this->getComments(), 'title.0', '');
 
         if (empty($title)) {
-            return $this->getNestedValue('filename');
+            return (string) $this->getNestedValue('filename', '');
         }
 
         return $title;
     }
-
 
     /**
      * @return array|\ArrayAccess|mixed
@@ -88,51 +97,45 @@ trait HasInfoFile
         return Arr::get($this->getComments(), 'album.0', '');
     }
 
-
     /**
      * @return array|mixed
      */
     public function getGenres(): mixed
     {
-        return $this->getNestedValue('genre') ?? [];
+        return $this->getNestedValue('genre', $this->getNestedValue('comments.genre')) ?? [];
     }
-
 
     /**
      * @return mixed|null
      */
     public function getArtist(): mixed
     {
-        return $this->getNestedValue('artist') ?? null;
+        return $this->getNestedValue('artist', $this->getNestedValue('comments.artist')) ?? null;
     }
-
 
     /**
      * @return mixed|null
      */
     public function getComposer(): mixed
     {
-        return $this->getNestedValue('composer') ?? null;
+        return $this->getNestedValue('composer', $this->getNestedValue('comments.composer')) ?? null;
     }
-
 
     /**
      * @return mixed|null
      */
     public function getTrackNumber(): mixed
     {
-        return $this->getNestedValue('track_number') ?? null;
+        return $this->getNestedValue('track_number', $this->getNestedValue('comments.track_number')) ?? null;
     }
-
 
     /**
      * @return mixed|null
      */
     public function getCopyrightInfo(): mixed
     {
-        return $this->getNestedValue('copyright') ?? null;
+        return $this->getNestedValue('copyright', $this->getNestedValue('comments.copyright')) ?? null;
     }
-
 
     /**
      * @return mixed|null

@@ -2,6 +2,7 @@
 
 namespace Plutuss\Services;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -12,35 +13,30 @@ use Plutuss\DTO\MediaAnalyzerDTO;
 use Plutuss\DTO\MediaAnalyzerDTOInterface;
 use Plutuss\Exceptions\GetID3Exception;
 
-
 class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 {
-
     protected string $file;
 
-    private MediaManagerService $managerService;
+    private MediaManagerServiceInterface $managerService;
 
     protected bool $saveFileFromUrl = false;
 
-    protected ?string $original_filename;
+    protected ?string $original_filename = null;
 
-    protected int|string|null $filesize;
+    protected int|string|null $filesize = null;
 
-    protected $fp;
+    protected mixed $fp = null;
 
     private string $path;
 
     private string $disk;
 
-    private Collection|array|null $info = null;
-
     public function __construct(
-        protected GetID3 $getID3
-    )
-    {
-        $this->managerService = app(MediaManagerServiceInterface::class);
+        protected GetID3 $getID3,
+        ?MediaManagerServiceInterface $managerService = null
+    ) {
+        $this->managerService = $managerService ?? app(MediaManagerServiceInterface::class);
     }
-
 
     /**
      * @param string $file
@@ -50,12 +46,11 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      * @return $this
      */
     private function setData(
-        string     $file,
-        int|string $filesize = null,
-        ?string    $originalFileName = '',
-                   $fp = null
-    ): static
-    {
+        string $file,
+        int|string|null $filesize = null,
+        ?string $originalFileName = '',
+        mixed $fp = null
+    ): static {
         $this->file = $file;
         $this->filesize = $filesize;
         $this->original_filename = $originalFileName;
@@ -63,21 +58,32 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         return $this;
     }
 
-
     /**
      * @return Collection
      */
     private function getAnalyze(): Collection
     {
-        $keyPrefix = config('getid3.key_prefix');
-
-        $key = $keyPrefix . '_' . md5($this->file) . '_' . $this->filesize;
-
-        if (config('getid3.cache')) {
-            return Cache::remember($key, config('getid3.cache_time'), fn() => $this->analyzeRaw());
+        if (!config('getid3.cache')) {
+            return $this->analyzeRaw();
         }
 
-        return $this->analyzeRaw();
+        $keyPrefix = config('getid3.key_prefix');
+
+        // Fingerprint the bytes, including streams supplied by remote disks.
+        $context = hash_init('sha256');
+        if (is_resource($this->fp)) {
+            rewind($this->fp);
+            hash_update_stream($context, $this->fp);
+            rewind($this->fp);
+        } elseif (is_file($this->file)) {
+            hash_update_file($context, $this->file);
+        }
+        $key = $keyPrefix . '_' . hash('sha256', implode('|', [
+            $this->disk ?? '', $this->file, (string) $this->original_filename,
+            hash_final($context),
+        ]));
+
+        return Cache::remember($key, config('getid3.cache_time'), fn () => $this->analyzeRaw());
     }
 
     /**
@@ -85,20 +91,22 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      */
     private function analyzeRaw(): Collection
     {
-        $this->info = $this->getID3->analyze(
+        $info = $this->getID3->analyze(
             $this->file,
             $this->filesize,
             $this->original_filename,
             $this->fp
         );
 
-        $this->infoHasCommentsOrTags();
+        foreach (['id3v2', 'id3v1'] as $version) {
+            if (!Arr::has($info, 'tags.' . $version) && Arr::has($info, $version . '.comments')) {
+                Arr::set($info, 'tags.' . $version, Arr::get($info, $version . '.comments'));
+            }
+        }
 
-        $this->infoHasId3V2orId3V1();
+        $this->getID3->CopyTagsToComments($info);
 
-        $this->getID3->CopyTagsToComments($this->info);
-
-        return $this->info = collect($this->info);
+        return collect($info);
     }
 
     /**
@@ -108,7 +116,7 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     public function uploadFile(UploadedFile $file): MediaAnalyzerDTOInterface
     {
         return new MediaAnalyzerDTO(
-            $this->setData($file)->getAnalyze()
+            $this->setData($file->getPathname(), $file->getSize(), $file->getClientOriginalName())->getAnalyze()
         );
     }
 
@@ -119,23 +127,21 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      */
     public function fromUrl(string $url): MediaAnalyzerDTOInterface
     {
-
         $this->managerService
             ->setUrl($url)
             ->setDisk($this->getFilesystemsDisk())
             ->handler();
 
-
-        $response = $this->fromLocalFile(
-            $this->managerService->getPath(),
-            $this->getFilesystemsDisk()
-        );
-
-        if (!$this->saveFileFromUrl) {
-            $this->managerService->delete();
+        try {
+            return $this->fromLocalFile(
+                $this->managerService->getPath(),
+                $this->getFilesystemsDisk()
+            );
+        } finally {
+            if (!$this->saveFileFromUrl) {
+                $this->managerService->delete();
+            }
         }
-
-        return $response;
     }
 
     /**
@@ -146,10 +152,16 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
      */
     public function fromLocalFile(?string $path = null, ?string $disk = null): MediaAnalyzerDTOInterface
     {
-        if ($path)
+        if ($path !== null) {
             $this->path = $path;
-        if ($disk)
+        }
+        if ($disk !== null) {
             $this->disk = $disk;
+        }
+
+        if (!isset($this->path)) {
+            throw new GetID3Exception('A media file path is required.');
+        }
 
         $storage = Storage::disk(
             $this->getFilesystemsDisk()
@@ -157,13 +169,26 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
         $this->fileExists($this->path, $storage);
 
-        return new MediaAnalyzerDTO(
-            $this->setData(
-                file: $this->path,
-                filesize: $storage->size($this->path),
-                fp: $storage->readStream($this->path)
-            )->getAnalyze()
-        );
+        $stream = $storage->readStream($this->path);
+        if (!is_resource($stream)) {
+            throw new GetID3Exception('Unable to read media file.');
+        }
+
+        try {
+            return new MediaAnalyzerDTO(
+                $this->setData(
+                    file: $this->path,
+                    filesize: $storage->size($this->path),
+                    originalFileName: basename($this->path),
+                    fp: $stream
+                )->getAnalyze()
+            );
+        } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+            $this->fp = null;
+        }
     }
 
     /**
@@ -188,49 +213,23 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
         return $this;
     }
 
-
     /**
      * @param string $path
      * @param $storage
      * @return void
      * @throws GetID3Exception
      */
-    private function fileExists(string $path, $storage): void
+    private function fileExists(string $path, Filesystem $storage): void
     {
         if (!$storage->exists($path)) {
             throw new GetID3Exception(sprintf('File at path %s not found', $path), 404);
         }
-
     }
 
     protected function getFilesystemsDisk(): string
     {
         return $this->disk ??= config('filesystems.default');
     }
-
-    /**
-     * @return void
-     */
-    private function infoHasCommentsOrTags(): void
-    {
-        if (!Arr::has($this->info, ['comments', 'tags'])) {
-            $this->info = Arr::has($this->info, 'id3v2.comments') ?
-                Arr::set($this->info, 'tags.id3v2', Arr::get($this->info, 'id3v2.comments')) : $this->info;
-        };
-    }
-
-    /**
-     * @return void
-     */
-    private function infoHasId3V2orId3V1(): void
-    {
-        if (!Arr::has($this->info, ['id3v2', 'id3v1'])) {
-            $this->info = Arr::has($this->info, 'id3v1.comments') ?
-                Arr::set($this->info, 'tags.id3v1', Arr::get($this->info, 'id3v1.comments')) : $this->info;
-
-        }
-    }
-
 
     /**
      * @param bool $saveFileFromUrl
@@ -256,5 +255,4 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
 
         return $this;
     }
-
 }

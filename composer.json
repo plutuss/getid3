@@ -22,7 +22,10 @@
     ],
     "require": {
         "james-heinrich/getid3": "^v2.0.0-beta6",
-        "ext-fileinfo": "*"
+        "ext-fileinfo": "*",
+        "php": "^8.2",
+        "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/http": "^11.0 || ^12.0 || ^13.0"
     },
     "autoload": {
         "psr-4": {
@@ -35,5 +38,17 @@
                 "Plutuss\\Providers\\GetId3ServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+        "phpunit/phpunit": "^11.0 || ^12.0 || ^13.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Plutuss\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit"
     }
 }
