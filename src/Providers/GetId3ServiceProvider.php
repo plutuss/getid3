@@ -4,7 +4,9 @@ namespace Plutuss\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use JamesHeinrich\GetID3\GetID3;
+use Plutuss\Download\DownloadOptions;
 use Plutuss\Services\MediaAnalyzerService;
+use Plutuss\Services\ConfigurableMediaAnalyzerInterface;
 use Plutuss\Services\MediaAnalyzerServiceInterface;
 use Plutuss\Services\MediaManagerService;
 use Plutuss\Services\MediaManagerServiceInterface;
@@ -19,11 +21,21 @@ class GetId3ServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/getid3.php', 'getid3');
 
+        $this->app->bind(DownloadOptions::class, fn () => new DownloadOptions(
+            maxBytes: config('getid3.download.max_bytes'),
+            timeout: config('getid3.download.timeout'),
+            readTimeout: (float) config('getid3.download.read_timeout', 30),
+            connectTimeout: (float) config('getid3.download.connect_timeout', 30),
+            maxRedirects: (int) config('getid3.download.max_redirects', 20),
+            allowedHosts: config('getid3.download.allowed_hosts', []),
+            allowPrivateNetworks: (bool) config('getid3.download.allow_private_networks', true),
+        ));
         $this->app->bind(MediaManagerServiceInterface::class, MediaManagerService::class);
 
         $this->app->bind(MediaAnalyzerServiceInterface::class, function ($app): MediaAnalyzerServiceInterface {
             return new MediaAnalyzerService(new GetID3(), $app->make(MediaManagerServiceInterface::class));
         });
+        $this->app->alias(MediaAnalyzerServiceInterface::class, ConfigurableMediaAnalyzerInterface::class);
     }
 
     /**
@@ -31,6 +43,10 @@ class GetId3ServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'getid3');
+        $this->publishes([
+            __DIR__ . '/../lang' => $this->app->langPath('vendor/getid3'),
+        ], 'getid3-translations');
         $this->publishes([
             __DIR__ . '/../config/getid3.php' => config_path('getid3.php'),
         ]);

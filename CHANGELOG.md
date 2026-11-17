@@ -1,5 +1,40 @@
 # Changelog
 
+## [2.1.0] - 2026-11-17
+
+### Added
+
+- Fluent `MediaRule::video()`, `audio()`, `image()` and `media()` validation with
+  duration, display resolution, required audio and MIME constraints, using one
+  analysis per rule chain. English/Russian messages support custom attribute names.
+- Readonly `AudioMetadata` and `VideoMetadata`, nullable normalized numeric values,
+  stream-presence checks, typed duration/MIME accessors and rotation-aware dimensions.
+- `getErrors()`, `getWarnings()`, `hasErrors()` and opt-in `throwIfErrors()` with
+  a dedicated exception preserving the message list.
+- `DownloadOptions`: byte limits, total/read/opening timeouts, redirect budgets,
+  exact host allowlists and opt-in public-network-only downloads with IP pinning.
+- `content`, `metadata` and `none` cache strategies. Metadata cache hits avoid
+  opening a stream and can use caller-supplied object version identifiers.
+- Buffering for non-seekable filesystem streams.
+- Synthetic MP3, FLAC, MP4, rotated MOV and PNG fixtures, focused regression tests,
+  an optional cache benchmark and documentation for each feature.
+
+### Compatibility
+
+- PHP 8.2+ and Laravel 11–13 remain supported.
+- Existing 2.0 interfaces are unchanged; new contracts extend the original API.
+- Content-based caching remains the default. Private network access remains
+  enabled and byte limits are opt-in.
+- Downloads retain 30-second read/opening timeouts; total time and byte limits
+  are opt-in. HTTP errors and truncated declared bodies are rejected.
+- No FFmpeg dependency is added to the package or test runtime.
+
+### Validation
+
+- 65 tests / 245 assertions on PHP 8.4.12; framework compatibility matrix checked
+  separately in CI for PHP 8.2/Laravel 11, PHP 8.3/Laravel 12 and PHP 8.4/Laravel 13.
+- PHP syntax, Composer validation, workflow syntax and benchmark smoke checks.
+
 ## [2.0.0] - 2026-11-17
 
 ### Compatibility
@@ -34,4 +69,5 @@
 - 16 tests and 54 assertions passed with Laravel 11, 12 and 13 on PHP 8.4.12.
 - Composer validation and PHP syntax checks passed.
 
+[2.1.0]: https://github.com/plutuss/getid3/compare/2.0.0...2.1.0
 [2.0.0]: https://github.com/plutuss/getid3/compare/1.5.0...2.0.0

@@ -25,7 +25,8 @@
         "ext-fileinfo": "*",
         "php": "^8.2",
         "illuminate/support": "^11.0 || ^12.0 || ^13.0",
-        "illuminate/http": "^11.0 || ^12.0 || ^13.0"
+        "illuminate/http": "^11.0 || ^12.0 || ^13.0",
+        "guzzlehttp/psr7": "^2.6 || ^3.0"
     },
     "autoload": {
         "psr-4": {

@@ -36,6 +36,7 @@ jobs:
             const end = lines.findIndex(line => line.startsWith('## ') || /^\[\d/.test(line));
             const notes = (end < 0 ? lines : lines.slice(0, end)).join('\n').trim();
             if (!notes) throw new Error('Release notes must not be empty');
+            const comparison = changelog.split('\n').find(line => line.startsWith(`[${version}]: `))?.split(']: ')[1];
             try {
               const existing = await github.rest.repos.getReleaseByTag({
                 ...context.repo, tag: version,
@@ -48,7 +49,7 @@ jobs:
                 tag_name: version,
                 target_commitish: context.sha,
                 name: version,
-                body: `${notes}\n\n[Upgrade guide](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${version}/UPGRADING.md)\n\n[Full changelog](https://github.com/${context.repo.owner}/${context.repo.repo}/compare/1.5.0...${version})`,
+                body: `${notes}\n\n[Upgrade guide](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/${version}/UPGRADING.md)\n\n${comparison ? `[Full changelog](${comparison})` : ''}`,
                 draft: false,
                 prerelease: false,
                 make_latest: 'true',
