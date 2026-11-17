@@ -1,6 +1,6 @@
 {
     "name": "plutuss/getid3-laravel",
-    "description": "A wrapper around james-heinrich/getid3 to extract various information from media files.",
+    "description": "Laravel media metadata extraction and upload validation with getID3: audio/video duration, resolution, codecs, ID3 tags and embedded artwork.",
     "keywords": [
         "laravel",
         "getid3",
@@ -8,7 +8,14 @@
         "audio",
         "mp4",
         "mp3",
-        "video"
+        "video",
+        "media-metadata",
+        "metadata",
+        "id3",
+        "duration",
+        "resolution",
+        "upload-validation",
+        "laravel-validation"
     ],
     "minimum-stability": "stable",
     "type": "library",
