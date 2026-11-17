@@ -23,10 +23,10 @@ class GetId3ServiceProvider extends ServiceProvider
 
         $this->app->bind(DownloadOptions::class, fn () => new DownloadOptions(
             maxBytes: config('getid3.download.max_bytes'),
-            timeout: (float) config('getid3.download.timeout', 30),
+            timeout: config('getid3.download.timeout'),
             readTimeout: (float) config('getid3.download.read_timeout', 30),
-            connectTimeout: (float) config('getid3.download.connect_timeout', 10),
-            maxRedirects: (int) config('getid3.download.max_redirects', 5),
+            connectTimeout: (float) config('getid3.download.connect_timeout', 30),
+            maxRedirects: (int) config('getid3.download.max_redirects', 20),
             allowedHosts: config('getid3.download.allowed_hosts', []),
             allowPrivateNetworks: (bool) config('getid3.download.allow_private_networks', true),
         ));

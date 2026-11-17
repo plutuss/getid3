@@ -4,28 +4,13 @@ namespace Plutuss\Tests;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Orchestra\Testbench\TestCase;
 use Plutuss\DTO\MediaAnalyzerDTO;
 use Plutuss\Exceptions\GetID3Exception;
-use Plutuss\Providers\GetId3ServiceProvider;
 use Plutuss\Services\MediaAnalyzerServiceInterface;
 use Plutuss\Services\MediaManagerServiceInterface;
 
-class MediaAnalyzerTest extends TestCase
+class MediaAnalyzerTest extends PackageTestCase
 {
-    protected function getPackageProviders($app): array
-    {
-        return [GetId3ServiceProvider::class];
-    }
-
-    private function wav(int $seconds = 1): string
-    {
-        $data = str_repeat("\x80", 8000 * $seconds);
-        return 'RIFF' . pack('V', 36 + strlen($data)) . 'WAVEfmt '
-            . pack('VvvVVvv', 16, 1, 1, 8000, 8000, 1, 8)
-            . 'data' . pack('V', strlen($data)) . $data;
-    }
-
     public function test_default_configuration_and_service_instances(): void
     {
         self::assertTrue(config('getid3.cache'));

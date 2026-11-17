@@ -105,10 +105,10 @@ class MediaAnalyzerService implements ConfigurableMediaAnalyzerInterface
 
     private function cacheKey(string $fingerprint): string
     {
-        return config('getid3.key_prefix') . '_' . hash('sha256', json_encode([
+        return config('getid3.key_prefix') . '_' . hash('sha256', serialize([
             '2.1', $this->effectiveCacheStrategy()->value, $this->disk ?? '',
             $this->file, $this->original_filename, $this->filesize, $fingerprint,
-        ], JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_SUBSTITUTE));
+        ]));
     }
 
     /**
@@ -136,7 +136,7 @@ class MediaAnalyzerService implements ConfigurableMediaAnalyzerInterface
 
     /**
      * @param UploadedFile $file
-     * @return MediaAnalyzerDTOInterface
+     * @return MediaMetadataInterface
      */
     public function uploadFile(UploadedFile $file): MediaMetadataInterface
     {
@@ -148,7 +148,7 @@ class MediaAnalyzerService implements ConfigurableMediaAnalyzerInterface
 
     /**
      * @param string $url
-     * @return MediaAnalyzerDTOInterface
+     * @return MediaMetadataInterface
      * @throws GetID3Exception
      */
     public function fromUrl(string $url): MediaMetadataInterface
@@ -173,7 +173,7 @@ class MediaAnalyzerService implements ConfigurableMediaAnalyzerInterface
     /**
      * @param string|null $path
      * @param string|null $disk
-     * @return MediaAnalyzerDTOInterface
+     * @return MediaMetadataInterface
      * @throws GetID3Exception
      */
     public function fromLocalFile(?string $path = null, ?string $disk = null, ?string $version = null): MediaMetadataInterface

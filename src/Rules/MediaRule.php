@@ -9,6 +9,7 @@ use InvalidArgumentException;
 use Plutuss\DTO\MediaAnalyzerDTO;
 use Plutuss\DTO\MediaMetadataInterface;
 use Plutuss\Exceptions\GetID3Exception;
+use Plutuss\Metadata\MetadataValue;
 use Plutuss\Services\MediaAnalyzerServiceInterface;
 
 final class MediaRule implements ValidationRule
@@ -75,8 +76,8 @@ final class MediaRule implements ValidationRule
 
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $reject = static function (string $key, array $parameters = []) use ($fail, $attribute): void {
-            $fail('getid3::validation.' . $key)->translate(['attribute' => $attribute] + $parameters);
+        $reject = static function (string $key, array $parameters = []) use ($fail): void {
+            $fail('getid3::validation.' . $key)->translate($parameters);
         };
         if (!$value instanceof UploadedFile || !$value->isValid()) {
             $reject('file');
@@ -127,8 +128,8 @@ final class MediaRule implements ValidationRule
         }
         if ($this->minimumResolution !== null || $this->maximumResolution !== null) {
             $video = $media->getVideoMetadata();
-            $width = $video?->getDisplayWidth();
-            $height = $video?->getDisplayHeight();
+            $width = $image ? MetadataValue::integer($media->getNestedValue('video.resolution_x')) : $video?->getDisplayWidth();
+            $height = $image ? MetadataValue::integer($media->getNestedValue('video.resolution_y')) : $video?->getDisplayHeight();
             if ($width === null || $height === null) {
                 $reject('metadata', ['field' => 'resolution']);
                 return;

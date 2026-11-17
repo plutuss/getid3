@@ -6,10 +6,10 @@ return [
     'cache' => env('GETID3_CACHE', true), // Enable or disable caching
     'download' => [
         'max_bytes' => null,
-        'timeout' => 30,
+        'timeout' => null, // Opt into a total deadline without changing 2.0 downloads.
         'read_timeout' => 30,
-        'connect_timeout' => 10,
-        'max_redirects' => 5,
+        'connect_timeout' => 30,
+        'max_redirects' => 20,
         'allowed_hosts' => [],
         'allow_private_networks' => true, // Preserve access to internal media servers.
     ],

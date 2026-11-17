@@ -2,7 +2,7 @@
 
 namespace Plutuss\Metadata;
 
-/** Dimensions are encoded pixels; rotation is clockwise degrees when reported. */
+/** Dimensions are encoded pixels; rotation uses the degrees reported by getID3. */
 final readonly class VideoMetadata
 {
     public function __construct(

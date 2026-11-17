@@ -9,10 +9,10 @@ final readonly class DownloadOptions
     /** @param list<string> $allowedHosts Exact hostnames, without ports or wildcards. */
     public function __construct(
         public ?int $maxBytes = null,
-        public float $timeout = 30,
+        public ?float $timeout = null,
         public float $readTimeout = 30,
-        public float $connectTimeout = 10,
-        public int $maxRedirects = 5,
+        public float $connectTimeout = 30,
+        public int $maxRedirects = 20,
         public array $allowedHosts = [],
         public bool $allowPrivateNetworks = true,
     ) {
@@ -20,7 +20,7 @@ final readonly class DownloadOptions
             throw new InvalidArgumentException('Download size and redirect limits must be non-negative.');
         }
         foreach ([$timeout, $readTimeout, $connectTimeout] as $seconds) {
-            if (!is_finite($seconds) || $seconds <= 0) {
+            if ($seconds !== null && (!is_finite($seconds) || $seconds <= 0)) {
                 throw new InvalidArgumentException('Download timeouts must be positive finite seconds.');
             }
         }

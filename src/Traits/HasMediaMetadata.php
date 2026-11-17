@@ -16,7 +16,9 @@ trait HasMediaMetadata
 
     public function hasVideo(): bool
     {
-        return is_array($this->getNestedValue('video')) && $this->getNestedValue('video') !== [];
+        return is_array($this->getNestedValue('video'))
+            && $this->getNestedValue('video') !== []
+            && !str_starts_with(strtolower($this->getMimeType() ?? ''), 'image/');
     }
 
     public function getDurationSeconds(): ?float

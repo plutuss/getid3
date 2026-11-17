@@ -16,7 +16,7 @@ class Downloader
     /** @return resource Caller owns the returned temporary stream. */
     public function download(string $url, DownloadOptions $options): mixed
     {
-        $deadline = microtime(true) + $options->timeout;
+        $deadline = $options->timeout === null ? null : microtime(true) + $options->timeout;
         $buffer = tmpfile();
         if ($buffer === false) {
             throw new GetID3Exception('Unable to create download buffer.');
@@ -43,7 +43,11 @@ class Downloader
                         if ($redirects >= $options->maxRedirects || !isset($fields['location'])) {
                             throw new GetID3Exception('Media download redirect limit reached or Location is missing.');
                         }
-                        $url = (string) UriResolver::resolve(new Uri($url), new Uri($fields['location']));
+                        try {
+                            $url = (string) UriResolver::resolve(new Uri($url), new Uri($fields['location']));
+                        } catch (\InvalidArgumentException $exception) {
+                            throw new GetID3Exception('Invalid download redirect.', 0, $exception);
+                        }
                         continue;
                     }
                     if ($status < 200 || $status >= 300) {
@@ -76,7 +80,7 @@ class Downloader
                         }
                     }
                     if ($length !== null && !isset($fields['transfer-encoding']) && $bytes != $length) {
-                        throw new GetID3Exception('Media download ended before the declared Content-Length.');
+                        throw new GetID3Exception('Media download size does not match Content-Length.');
                     }
                     rewind($buffer);
                     return $buffer;
@@ -115,8 +119,11 @@ class Downloader
         return [$status, $fields];
     }
 
-    private function remaining(float $deadline): float
+    private function remaining(?float $deadline): float
     {
+        if ($deadline === null) {
+            return INF;
+        }
         $remaining = $deadline - microtime(true);
         if ($remaining <= 0) {
             throw new GetID3Exception('Media download exceeded its total timeout.');
