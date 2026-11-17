@@ -2,6 +2,7 @@
 
 return [
     'key_prefix' => 'getid3', // Prefix for cache keys
+    'cache_strategy' => env('GETID3_CACHE_STRATEGY', 'content'), // content, metadata, none
     'cache' => env('GETID3_CACHE', true), // Enable or disable caching
     'download' => [
         'max_bytes' => null,

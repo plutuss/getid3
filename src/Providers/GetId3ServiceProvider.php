@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use JamesHeinrich\GetID3\GetID3;
 use Plutuss\Download\DownloadOptions;
 use Plutuss\Services\MediaAnalyzerService;
+use Plutuss\Services\ConfigurableMediaAnalyzerInterface;
 use Plutuss\Services\MediaAnalyzerServiceInterface;
 use Plutuss\Services\MediaManagerService;
 use Plutuss\Services\MediaManagerServiceInterface;
@@ -34,6 +35,7 @@ class GetId3ServiceProvider extends ServiceProvider
         $this->app->bind(MediaAnalyzerServiceInterface::class, function ($app): MediaAnalyzerServiceInterface {
             return new MediaAnalyzerService(new GetID3(), $app->make(MediaManagerServiceInterface::class));
         });
+        $this->app->alias(MediaAnalyzerServiceInterface::class, ConfigurableMediaAnalyzerInterface::class);
     }
 
     /**

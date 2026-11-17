@@ -9,7 +9,8 @@ use Plutuss\Services\MediaAnalyzerServiceInterface;
 
 /**
  * @method static MediaMetadataInterface uploadFile(UploadedFile $file)
- * @method static MediaMetadataInterface fromLocalFile(?string $path = null, ?string $disk = null)
+ * @method static MediaMetadataInterface fromLocalFile(?string $path = null, ?string $disk = null, ?string $version = null)
+ * @method static \Plutuss\Services\MediaAnalyzerService setCacheStrategy(\Plutuss\Cache\CacheStrategy|string $strategy)
  * @method static \Plutuss\Services\MediaAnalyzerService setDownloadOptions(\Plutuss\Download\DownloadOptions $options)
  * @method static MediaAnalyzerServiceInterface setDisk(string $disk)
  * @method static MediaAnalyzerServiceInterface setPath(string $path)

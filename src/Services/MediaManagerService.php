@@ -5,11 +5,12 @@ namespace Plutuss\Services;
 use finfo;
 use Plutuss\Download\Downloader;
 use Plutuss\Download\DownloadOptions;
+use Plutuss\Download\DownloadOptionsAware;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Plutuss\Exceptions\GetID3Exception;
 
-class MediaManagerService implements MediaManagerServiceInterface
+class MediaManagerService implements MediaManagerServiceInterface, DownloadOptionsAware
 {
     private Filesystem $storage;
     private mixed $file = null;
