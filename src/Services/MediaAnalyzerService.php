@@ -4,6 +4,7 @@ namespace Plutuss\Services;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
+use Plutuss\Download\DownloadOptions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -239,6 +240,15 @@ class MediaAnalyzerService implements MediaAnalyzerServiceInterface
     {
         $this->saveFileFromUrl = $saveFileFromUrl;
 
+        return $this;
+    }
+
+    public function setDownloadOptions(DownloadOptions $options): static
+    {
+        if (!method_exists($this->managerService, 'setDownloadOptions')) {
+            throw new GetID3Exception('The configured media manager does not support download options.');
+        }
+        $this->managerService->setDownloadOptions($options);
         return $this;
     }
 

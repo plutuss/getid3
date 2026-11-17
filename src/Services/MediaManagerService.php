@@ -3,6 +3,8 @@
 namespace Plutuss\Services;
 
 use finfo;
+use Plutuss\Download\Downloader;
+use Plutuss\Download\DownloadOptions;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Storage;
 use Plutuss\Exceptions\GetID3Exception;
@@ -18,30 +20,23 @@ class MediaManagerService implements MediaManagerServiceInterface
     protected string $url;
     private string $disk;
 
+    private ?DownloadOptions $downloadOptions = null;
+
+    public function __construct(private ?Downloader $downloader = null) {}
+
+    public function setDownloadOptions(DownloadOptions $options): static
+    {
+        $this->downloadOptions = $options;
+        return $this;
+    }
+
     public function handler(): void
     {
-        $scheme = strtolower((string) parse_url($this->url, PHP_URL_SCHEME));
-        if (!in_array($scheme, ['http', 'https'], true)) {
-            throw new GetID3Exception('Only HTTP and HTTPS media URLs are supported.');
-        }
-
         $this->closeBuffer();
-        $context = stream_context_create(['http' => ['timeout' => 30]]);
-        $stream = @fopen($this->url, 'rb', false, $context);
-        if ($stream === false) {
-            throw new GetID3Exception('Unable to download media file.');
-        }
+        $downloader = $this->downloader ?? app(Downloader::class);
+        $this->file = $downloader->download($this->url, $this->downloadOptions ?? app(DownloadOptions::class));
 
         try {
-            // Use a temporary stream so large downloads can spill to disk.
-            $this->file = tmpfile();
-            if ($this->file === false || stream_copy_to_stream($stream, $this->file) === false) {
-                throw new GetID3Exception('Unable to buffer media file.');
-            }
-            $metadata = stream_get_meta_data($stream);
-            if ($metadata['timed_out'] ?? false) {
-                throw new GetID3Exception('Media download timed out.');
-            }
             rewind($this->file);
             $sample = fread($this->file, 8192);
             $mime = (new finfo(FILEINFO_MIME_TYPE))->buffer($sample);
@@ -58,8 +53,6 @@ class MediaManagerService implements MediaManagerServiceInterface
         } catch (\Throwable $exception) {
             $this->closeBuffer();
             throw $exception;
-        } finally {
-            fclose($stream);
         }
     }
 
